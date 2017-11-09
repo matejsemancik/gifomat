@@ -6,5 +6,7 @@ class MainPresenter: BasePresenter<MainView>() {
 
 	override fun attachView(view: MainView) {
 		super.attachView(view)
+
+		getView()?.initCamera()
 	}
 }
