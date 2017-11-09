@@ -7,4 +7,13 @@
 	android:layout_height="match_parent"
 	tools:context="wtf.matsem.gifomat.ui.main.MainActivity">
 
+	<SurfaceView
+		android:id="@+id/preview_surface"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+
+	<SurfaceView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/playback_surface"/>
 </FrameLayout>

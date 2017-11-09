@@ -8,5 +8,6 @@ class MainPresenter: BasePresenter<MainView>() {
 		super.attachView(view)
 
 		getView()?.initCamera()
+		getView()?.startCamPreview()
 	}
 }
