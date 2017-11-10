@@ -7,4 +7,6 @@ interface MainView: BaseView {
 	fun initCamera()
 
 	fun startCamPreview()
+
+	fun triggerBurstCapture()
 }

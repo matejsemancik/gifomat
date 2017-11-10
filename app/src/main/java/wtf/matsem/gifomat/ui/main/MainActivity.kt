@@ -24,6 +24,8 @@ class MainActivity : Activity(), MainView {
 	private val presenter by inject<MainPresenter>()
 	private val camera2 by inject<GifomatCamera>()
 
+	val cameraThread = HandlerThread("CameraBackground")
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
@@ -36,13 +38,13 @@ class MainActivity : Activity(), MainView {
 	override fun onDestroy() {
 		presenter.detachView()
 		camera2.shutDown()
+		cameraThread.quitSafely()
 		super.onDestroy()
 	}
 
 	// region View impl
 
 	override fun initCamera() {
-		val cameraThread = HandlerThread("CameraBackground")
 		cameraThread.start()
 
 		val cameraHandler = Handler(cameraThread.looper)
@@ -69,6 +71,10 @@ class MainActivity : Activity(), MainView {
 
 		previewSurface.holder.setFixedSize(GifomatCamera.IMAGE_WIDTH, GifomatCamera.IMAGE_HEIGHT)
 		playbackSurface.holder.setFixedSize(GifomatCamera.IMAGE_WIDTH, GifomatCamera.IMAGE_HEIGHT)
+	}
+
+	override fun triggerBurstCapture() {
+
 	}
 
 	// endregion
