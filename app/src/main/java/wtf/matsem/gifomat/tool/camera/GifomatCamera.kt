@@ -100,7 +100,7 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		requestBuilder?.let {
 			it.addTarget(previewSurface)
 			it.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
-			previewSession?.setRepeatingRequest(it.build(), object : CameraCaptureSession.CaptureCallback() { /* Meh */}, null)
+			previewSession?.setRepeatingRequest(it.build(), object : CameraCaptureSession.CaptureCallback() { /* Meh */ }, null)
 		}
 	}
 
