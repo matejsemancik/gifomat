@@ -18,16 +18,19 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		const val IMAGE_WIDTH = 640
 		const val IMAGE_HEIGHT = 480
 		private const val MAX_IMGREADER_IMAGES = 1
+		const val NUMBER_IMAGES = 15;
 	}
 
 	private val imageReader = ImageReader.newInstance(IMAGE_WIDTH, IMAGE_HEIGHT, ImageFormat.JPEG, MAX_IMGREADER_IMAGES)
 	private var cameraDevice: CameraDevice? = null
 	private var previewSurface: Surface? = null
 	private var previewSession: CameraCaptureSession? = null
+	private var bgHandler: Handler? = null
 
 	// region Camera init
 
-	fun init(bgHandler: Handler, imgAvailableListener: ImageReader.OnImageAvailableListener) {
+	fun init(bgHandler: Handler, previewSurface: Surface, imgAvailableListener: ImageReader.OnImageAvailableListener) {
+		this.bgHandler = bgHandler
 		val camIds = cameraManager.cameraIdList
 
 		if (camIds.isEmpty()) {
@@ -38,6 +41,7 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		val camId = camIds[0]
 		d(TAG) { "Using cam id $camId" }
 
+		this.previewSurface = previewSurface
 		imageReader.setOnImageAvailableListener(imgAvailableListener, bgHandler)
 		cameraManager.openCamera(camId, openCameraCallback, bgHandler)
 	}
@@ -61,9 +65,8 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 
 	// region Preview capture
 
-	fun startPreview(previewSurface: Surface) {
+	fun startPreview() {
 		previewSession?.close()
-		this.previewSurface = previewSurface
 
 		if (cameraDevice == null) {
 			e(TAG) { "Couldn't start preview, camera device not open" }
@@ -100,8 +103,30 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		requestBuilder?.let {
 			it.addTarget(previewSurface)
 			it.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
-			previewSession?.setRepeatingRequest(it.build(), object : CameraCaptureSession.CaptureCallback() { /* Meh */ }, null)
+			previewSession?.setRepeatingRequest(it.build(), object : CameraCaptureSession.CaptureCallback() { /* Meh */ }, bgHandler)
 		}
+	}
+
+	// endregion
+
+	// region Burst capture
+
+	fun captureBurst() {
+		previewSession?.let {
+			val requestBuilder = cameraDevice?.createCaptureRequest(CameraDevice.TEMPLATE_VIDEO_SNAPSHOT)
+
+			requestBuilder?.let {
+				it.addTarget(previewSurface)
+				it.addTarget(imageReader.surface)
+				it.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+
+				val requests = mutableListOf<CaptureRequest>()
+				repeat(NUMBER_IMAGES) { requests.add(requestBuilder.build()) }
+				previewSession?.captureBurst(requests, object : CameraCaptureSession.CaptureCallback() { /* Meh */ }, bgHandler)
+			}
+		}
+
+		e(TAG) { "Preview session not running" }
 	}
 
 	// endregion

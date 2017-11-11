@@ -10,6 +10,6 @@ fun e(tag: String = "Gifomat", msg: () -> String) {
 	Timber.tag(tag).e(msg.invoke())
 }
 
-fun t(tag: String = "Gifomat", throwable: () -> Throwable) {
+fun t(tag: String = "Gifomat", throwable: () -> Throwable?) {
 	Timber.tag(tag).e(throwable.invoke())
 }
