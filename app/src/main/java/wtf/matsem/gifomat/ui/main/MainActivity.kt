@@ -8,13 +8,12 @@ import android.os.HandlerThread
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import org.koin.android.ext.android.inject
-import wtf.matsem.gifomat.R
-import wtf.matsem.gifomat.d
+import wtf.matsem.gifomat.*
 import wtf.matsem.gifomat.data.model.ImageFrame
-import wtf.matsem.gifomat.e
 import wtf.matsem.gifomat.tool.callback.SimpleSurfaceHolderCallback
 import wtf.matsem.gifomat.tool.camera.GifomatCamera
 import wtf.matsem.gifomat.tool.camera.ImageProcessor
@@ -23,6 +22,7 @@ class MainActivity : Activity(), MainView {
 
 	@BindView(R.id.preview_surface) lateinit var previewSurface: SurfaceView
 	@BindView(R.id.playback_surface) lateinit var playbackSurface: SurfaceView
+	@BindView(R.id.countdown) lateinit var countdownText: TextView
 
 	private val presenter by inject<MainPresenter>()
 	private val camera2 by inject<GifomatCamera>()
@@ -94,6 +94,19 @@ class MainActivity : Activity(), MainView {
 
 	override fun hidePlayer() {
 		playbackSurface.visibility = View.GONE
+	}
+
+	override fun showCountdown() {
+		countdownText.setVisible()
+	}
+
+	override fun setCountdownText(text: String) {
+		countdownText.text = text
+	}
+
+	override fun hideCountdown() {
+		countdownText.text = ""
+		countdownText.setGone()
 	}
 
 	// endregion

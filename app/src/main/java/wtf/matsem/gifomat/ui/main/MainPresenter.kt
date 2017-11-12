@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import wtf.matsem.gifomat.data.model.ImageFrame
 import wtf.matsem.gifomat.data.model.ImageSequence
+import wtf.matsem.gifomat.data.store.GifomatStore
 import wtf.matsem.gifomat.hardware.PeripheralManager
 import wtf.matsem.gifomat.mvp.BasePresenter
 import wtf.matsem.gifomat.t
@@ -16,7 +17,8 @@ import wtf.matsem.gifomat.tool.camera.ImageProcessor
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(private val peripheralManager: PeripheralManager,
-					private val imageProcessor: ImageProcessor) : BasePresenter<MainView>() {
+					private val imageProcessor: ImageProcessor,
+					private val gifomatStore: GifomatStore) : BasePresenter<MainView>() {
 
 	companion object {
 		const val TAG = "MainPresenter"
@@ -25,6 +27,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 
 	val disposables = CompositeDisposable()
 	var imgSequenceDisposable: Disposable? = null
+	var imageLooper: Disposable? = null
+	var countdownTimer: Disposable? = null
 
 	override fun attachView(view: MainView) {
 		super.attachView(view)
@@ -37,6 +41,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	override fun detachView() {
 		disposables.dispose()
 		imgSequenceDisposable?.dispose()
+		imageLooper?.dispose()
+
 		peripheralManager.close()
 		super.detachView()
 	}
@@ -44,11 +50,11 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	private fun initButton() {
 		val btnDisposable = peripheralManager.openInput(BUTTON_PIN)
 				.filter({ gpio: Gpio -> gpio.value == true })
+				.debounce(500, TimeUnit.MILLISECONDS)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.debounce(500, TimeUnit.MILLISECONDS)
 				.subscribe({ gpio: Gpio? ->
-					captureBurst()
+					startCountdown()
 				}, { t: Throwable? ->
 					Timber.tag(TAG).e(t)
 				})
@@ -56,27 +62,52 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		disposables.add(btnDisposable)
 	}
 
+	private fun startCountdown() {
+		imageLooper?.dispose()
+		countdownTimer?.dispose()
+		getView()?.hidePlayer()
+
+		val seconds = 3
+		countdownTimer = Observable.interval(0,1000L, TimeUnit.MILLISECONDS)
+				.take(seconds.toLong() + 1)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.doOnSubscribe({ getView()?.showCountdown() })
+				.doOnNext({ time -> getView()?.setCountdownText("${seconds - time}") })
+				.doOnComplete({
+					getView()?.hideCountdown()
+					captureBurst()
+				})
+				.subscribe()
+	}
+
 	private fun captureBurst() {
+		imageLooper?.dispose()
+		getView()?.hidePlayer()
+
 		imgSequenceDisposable?.dispose()
 		imgSequenceDisposable = imageProcessor.getImageSequenceObservable().subscribe(
-				{ sequence: ImageSequence? -> sequence?.let { playSequence(it) } },
+				{ sequence: ImageSequence? -> sequence?.let { onSequenceCaptured(it) } },
 				{ throwable: Throwable? -> t(TAG) { throwable } }
 		)
 
 		getView()?.triggerBurstCapture()
 	}
 
-	private fun playSequence(sequence: ImageSequence) {
-		getView()?.showPlayer()
+	private fun onSequenceCaptured(sequence: ImageSequence) {
+		imageLooper?.dispose()
+		gifomatStore.addSequence(sequence)
 
-		Observable.fromIterable(sequence.images)
+		getView()?.showPlayer()
+		imageLooper = Observable.fromIterable(gifomatStore.getSequences())
+				.concatMap { imageSequence -> Observable.fromIterable(imageSequence.images) }
 				.concatMap { frame: ImageFrame -> Observable.just(frame).delay(100, TimeUnit.MILLISECONDS) }
-				.repeat(3)
+				.repeat()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						{ frame -> getView()?.playImageFrame(frame) },
-						{ throwable -> Timber.tag(TAG).e(throwable) },
-						{ getView()?.hidePlayer() })
+						{ throwable -> Timber.tag(TAG).e(throwable) }
+				)
 	}
 }

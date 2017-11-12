@@ -16,4 +16,10 @@ interface MainView: BaseView {
 	fun playImageFrame(frame: ImageFrame)
 
 	fun hidePlayer()
+
+	fun showCountdown()
+
+	fun setCountdownText(text: String)
+
+	fun hideCountdown()
 }
