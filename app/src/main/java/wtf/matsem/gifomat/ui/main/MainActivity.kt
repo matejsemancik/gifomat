@@ -1,5 +1,6 @@
 package wtf.matsem.gifomat.ui.main
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.media.ImageReader
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.os.HandlerThread
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -101,13 +103,28 @@ class MainActivity : Activity(), MainView {
 	}
 
 	override fun setCountdownText(text: String) {
+		countdownText.scaleX = 1.5f
+		countdownText.scaleY = 1.5f
+
+		val animator = ValueAnimator.ofFloat(1.5f, 1.0f).setDuration(300)
+		animator.interpolator = DecelerateInterpolator()
+		animator.addUpdateListener({ animation ->
+			countdownText.scaleX = animation.animatedValue as Float
+			countdownText.scaleY = animation.animatedValue as Float
+		})
+
 		countdownText.text = text
+		animator.start()
 	}
 
 	override fun hideCountdown() {
 		countdownText.text = ""
 		countdownText.setGone()
 	}
+
+	// endregion
+
+	// region UI events
 
 	// endregion
 }

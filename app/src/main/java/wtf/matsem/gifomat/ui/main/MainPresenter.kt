@@ -29,6 +29,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	var imgSequenceDisposable: Disposable? = null
 	var imageLooper: Disposable? = null
 	var countdownTimer: Disposable? = null
+	var playbackDelay = 90L
 
 	override fun attachView(view: MainView) {
 		super.attachView(view)
@@ -42,6 +43,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		disposables.dispose()
 		imgSequenceDisposable?.dispose()
 		imageLooper?.dispose()
+		countdownTimer?.dispose()
 
 		peripheralManager.close()
 		super.detachView()
@@ -95,13 +97,17 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	private fun onSequenceCaptured(sequence: ImageSequence) {
-		imageLooper?.dispose()
 		gifomatStore.addSequence(sequence)
+		restartPlayback()
+	}
+
+	private fun restartPlayback() {
+		imageLooper?.dispose()
 
 		getView()?.showPlayer()
 		imageLooper = Observable.fromIterable(gifomatStore.getSequences())
 				.concatMap { imageSequence -> Observable.fromIterable(imageSequence.images) }
-				.concatMap { frame: ImageFrame -> Observable.just(frame).delay(100, TimeUnit.MILLISECONDS) }
+				.concatMap { frame: ImageFrame -> Observable.just(frame).delay(playbackDelay, TimeUnit.MILLISECONDS) }
 				.repeat()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())

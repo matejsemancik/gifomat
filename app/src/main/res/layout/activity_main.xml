@@ -24,6 +24,7 @@
 		android:layout_gravity="center"
 		android:background="@drawable/bg_countdown"
 		android:gravity="center"
+		android:includeFontPadding="false"
 		android:textColor="@color/white_powder"
 		android:textSize="64sp"
 		android:visibility="gone"
