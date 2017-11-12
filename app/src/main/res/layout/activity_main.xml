@@ -14,5 +14,43 @@
 	<SurfaceView
 		android:id="@+id/playback_surface"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+		android:layout_height="match_parent"
+		android:visibility="gone" />
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="start|top"
+			android:layout_margin="16dp"
+			android:src="@drawable/ic_corner" />
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end|top"
+			android:layout_margin="16dp"
+			android:scaleX="-1"
+			android:src="@drawable/ic_corner" />
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="start|bottom"
+			android:layout_margin="16dp"
+			android:scaleY="-1"
+			android:src="@drawable/ic_corner" />
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end|bottom"
+			android:layout_margin="16dp"
+			android:scaleX="-1"
+			android:scaleY="-1"
+			android:src="@drawable/ic_corner" />
+	</FrameLayout>
 </FrameLayout>

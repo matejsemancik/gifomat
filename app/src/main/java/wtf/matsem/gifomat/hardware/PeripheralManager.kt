@@ -4,9 +4,7 @@ import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.GpioCallback
 import com.google.android.things.pio.PeripheralManagerService
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.processors.PublishProcessor
-import io.reactivex.schedulers.Schedulers
 
 class PeripheralManager {
 
@@ -38,8 +36,6 @@ class PeripheralManager {
 		gpioList.add(gpio)
 		return publishProcessor
 				.onBackpressureLatest()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
 	}
 
 	fun close() {

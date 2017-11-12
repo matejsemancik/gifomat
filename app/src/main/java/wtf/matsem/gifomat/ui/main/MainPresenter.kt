@@ -44,6 +44,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	private fun initButton() {
 		val btnDisposable = peripheralManager.openInput(BUTTON_PIN)
 				.filter({ gpio: Gpio -> gpio.value == true })
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
 				.debounce(500, TimeUnit.MILLISECONDS)
 				.subscribe({ gpio: Gpio? ->
 					captureBurst()

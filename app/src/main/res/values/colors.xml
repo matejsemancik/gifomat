@@ -3,4 +3,16 @@
 	<color name="colorPrimary">#3F51B5</color>
 	<color name="colorPrimaryDark">#303F9F</color>
 	<color name="colorAccent">#FF4081</color>
+
+	<color name="blue_dark">#FF011627</color>
+
+	<color name="white_powder">#FFFDFFFC</color>
+
+	<color name="bluegreen">#FF2EC4B6</color>
+
+	<color name="red_rose">#FFE71D36</color>
+	<color name="red_rose_op">#ccE71D36</color>
+	<color name="red_rose_opop">#44E71D36</color>
+
+	<color name="yellow_crayola">#FFFF9F1C</color>
 </resources>
