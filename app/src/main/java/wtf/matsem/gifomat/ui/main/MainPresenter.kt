@@ -34,6 +34,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	override fun attachView(view: MainView) {
 		super.attachView(view)
 
+		getView()?.setStatusIdle()
 		getView()?.initCamera()
 		getView()?.startCamPreview()
 		initButton()
@@ -67,6 +68,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	private fun startCountdown() {
 		imageLooper?.dispose()
 		countdownTimer?.dispose()
+
+		getView()?.setStatusIdle()
 		getView()?.hidePlayer()
 
 		val seconds = 3
@@ -78,14 +81,15 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.doOnNext({ time -> getView()?.setCountdownText("${seconds - time}") })
 				.doOnComplete({
 					getView()?.hideCountdown()
-					captureBurst()
+					startCapture()
 				})
 				.subscribe()
 	}
 
-	private fun captureBurst() {
+	private fun startCapture() {
 		imageLooper?.dispose()
 		getView()?.hidePlayer()
+		getView()?.setStatusRecording()
 
 		imgSequenceDisposable?.dispose()
 		imgSequenceDisposable = imageProcessor.getImageSequenceObservable().subscribe(
@@ -98,13 +102,15 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 
 	private fun onSequenceCaptured(sequence: ImageSequence) {
 		gifomatStore.addSequence(sequence)
-		restartPlayback()
+		startPlayback()
 	}
 
-	private fun restartPlayback() {
+	private fun startPlayback() {
 		imageLooper?.dispose()
 
 		getView()?.showPlayer()
+		getView()?.setStatusPlayback()
+
 		imageLooper = Observable.fromIterable(gifomatStore.getSequences())
 				.concatMap { imageSequence -> Observable.fromIterable(imageSequence.images) }
 				.concatMap { frame: ImageFrame -> Observable.just(frame).delay(playbackDelay, TimeUnit.MILLISECONDS) }

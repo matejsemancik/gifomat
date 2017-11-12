@@ -1,3 +1,8 @@
 <resources>
 	<string name="app_name">Gifomat</string>
+
+	<string name="status">Status</string>
+	<string name="status_idle">Idle</string>
+	<string name="status_playback">Playback</string>
+	<string name="status_recording">Recording</string>
 </resources>

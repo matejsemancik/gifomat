@@ -25,6 +25,7 @@ class MainActivity : Activity(), MainView {
 	@BindView(R.id.preview_surface) lateinit var previewSurface: SurfaceView
 	@BindView(R.id.playback_surface) lateinit var playbackSurface: SurfaceView
 	@BindView(R.id.countdown) lateinit var countdownText: TextView
+	@BindView(R.id.status_text) lateinit var statusText: TextView
 
 	private val presenter by inject<MainPresenter>()
 	private val camera2 by inject<GifomatCamera>()
@@ -49,6 +50,21 @@ class MainActivity : Activity(), MainView {
 	}
 
 	// region View impl
+
+	override fun setStatusIdle() {
+		statusText.text = resources.getString(R.string.status_idle)
+		statusText.setBackgroundColor(resources.getColor(R.color.bluegreen, theme))
+	}
+
+	override fun setStatusRecording() {
+		statusText.text = resources.getString(R.string.status_recording)
+		statusText.setBackgroundColor(resources.getColor(R.color.red_rose, theme))
+	}
+
+	override fun setStatusPlayback() {
+		statusText.text = resources.getString(R.string.status_playback)
+		statusText.setBackgroundColor(resources.getColor(R.color.yellow_crayola, theme))
+	}
 
 	override fun initCamera() {
 		cameraThread.start()

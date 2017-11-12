@@ -22,4 +22,10 @@ interface MainView: BaseView {
 	fun setCountdownText(text: String)
 
 	fun hideCountdown()
+
+	fun setStatusIdle()
+
+	fun setStatusRecording()
+
+	fun setStatusPlayback()
 }
