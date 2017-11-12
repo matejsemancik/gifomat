@@ -68,7 +68,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		getView()?.hidePlayer()
 
 		val seconds = 3
-		countdownTimer = Observable.interval(0,1000L, TimeUnit.MILLISECONDS)
+		countdownTimer = Observable.interval(0, 1000L, TimeUnit.MILLISECONDS)
 				.take(seconds.toLong() + 1)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
