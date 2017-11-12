@@ -17,20 +17,6 @@
 		android:layout_height="match_parent"
 		android:visibility="gone" />
 
-	<TextView
-		android:id="@+id/countdown"
-		android:layout_width="120dp"
-		android:layout_height="120dp"
-		android:layout_gravity="center"
-		android:background="@drawable/bg_countdown"
-		android:gravity="center"
-		android:includeFontPadding="false"
-		android:textColor="@color/white_powder"
-		android:textSize="64sp"
-		android:visibility="gone"
-		tools:text="3"
-		tools:visibility="visible" />
-
 	<FrameLayout
 		android:id="@+id/ui_overlay"
 		android:layout_width="match_parent"
@@ -42,7 +28,8 @@
 			android:layout_gravity="start|top"
 			android:layout_margin="16dp"
 			android:alpha="0.7"
-			android:src="@drawable/ic_corner" />
+			android:src="@drawable/ic_corner"
+			android:visibility="gone" />
 
 		<ImageView
 			android:layout_width="wrap_content"
@@ -73,15 +60,15 @@
 			android:src="@drawable/ic_corner" />
 
 		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_margin="16dp"
 			android:alpha="0.7"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="32dp"
 			android:orientation="vertical">
 
 			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:orientation="horizontal">
 
 				<TextView
@@ -94,15 +81,15 @@
 					android:textSize="18sp" />
 
 				<TextView
-					android:textStyle="bold"
 					android:id="@+id/status_text"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:background="@color/bluegreen"
 					android:padding="8dp"
-					tools:text="Idle"
 					android:textAllCaps="true"
-					android:textSize="18sp" />
+					android:textSize="18sp"
+					android:textStyle="bold"
+					tools:text="Idle" />
 			</LinearLayout>
 		</LinearLayout>
 	</FrameLayout>

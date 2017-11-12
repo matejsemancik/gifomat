@@ -56,7 +56,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.debounce(500, TimeUnit.MILLISECONDS)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe({ gpio: Gpio? ->
+				.subscribe({ _: Gpio? ->
 					startCountdown()
 				}, { t: Throwable? ->
 					Timber.tag(TAG).e(t)
@@ -77,10 +77,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.take(seconds.toLong() + 1)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.doOnSubscribe({ getView()?.showCountdown() })
-				.doOnNext({ time -> getView()?.setCountdownText("${seconds - time}") })
+				.doOnNext({ time -> getView()?.setStatusCountdown((seconds - time).toInt()) })
 				.doOnComplete({
-					getView()?.hideCountdown()
 					startCapture()
 				})
 				.subscribe()

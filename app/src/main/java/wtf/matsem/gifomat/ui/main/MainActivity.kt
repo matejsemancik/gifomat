@@ -14,8 +14,10 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import org.koin.android.ext.android.inject
-import wtf.matsem.gifomat.*
+import wtf.matsem.gifomat.R
+import wtf.matsem.gifomat.d
 import wtf.matsem.gifomat.data.model.ImageFrame
+import wtf.matsem.gifomat.e
 import wtf.matsem.gifomat.tool.callback.SimpleSurfaceHolderCallback
 import wtf.matsem.gifomat.tool.camera.GifomatCamera
 import wtf.matsem.gifomat.tool.camera.ImageProcessor
@@ -24,7 +26,6 @@ class MainActivity : Activity(), MainView {
 
 	@BindView(R.id.preview_surface) lateinit var previewSurface: SurfaceView
 	@BindView(R.id.playback_surface) lateinit var playbackSurface: SurfaceView
-	@BindView(R.id.countdown) lateinit var countdownText: TextView
 	@BindView(R.id.status_text) lateinit var statusText: TextView
 
 	private val presenter by inject<MainPresenter>()
@@ -64,6 +65,22 @@ class MainActivity : Activity(), MainView {
 	override fun setStatusPlayback() {
 		statusText.text = resources.getString(R.string.status_playback)
 		statusText.setBackgroundColor(resources.getColor(R.color.yellow_crayola, theme))
+	}
+
+	override fun setStatusCountdown(howMuch: Int) {
+		statusText.scaleX = 1.5f
+		statusText.scaleY = 1.5f
+
+		val animator = ValueAnimator.ofFloat(1.5f, 1.0f).setDuration(300)
+		animator.interpolator = DecelerateInterpolator()
+		animator.addUpdateListener({ animation ->
+			statusText.scaleX = animation.animatedValue as Float
+			statusText.scaleY = animation.animatedValue as Float
+		})
+
+		statusText.text = resources.getString(R.string.status_countdown, howMuch)
+		statusText.setBackgroundColor(resources.getColor(R.color.bluegreen, theme))
+		animator.start()
 	}
 
 	override fun initCamera() {
@@ -112,30 +129,6 @@ class MainActivity : Activity(), MainView {
 
 	override fun hidePlayer() {
 		playbackSurface.visibility = View.GONE
-	}
-
-	override fun showCountdown() {
-		countdownText.setVisible()
-	}
-
-	override fun setCountdownText(text: String) {
-		countdownText.scaleX = 1.5f
-		countdownText.scaleY = 1.5f
-
-		val animator = ValueAnimator.ofFloat(1.5f, 1.0f).setDuration(300)
-		animator.interpolator = DecelerateInterpolator()
-		animator.addUpdateListener({ animation ->
-			countdownText.scaleX = animation.animatedValue as Float
-			countdownText.scaleY = animation.animatedValue as Float
-		})
-
-		countdownText.text = text
-		animator.start()
-	}
-
-	override fun hideCountdown() {
-		countdownText.text = ""
-		countdownText.setGone()
 	}
 
 	// endregion

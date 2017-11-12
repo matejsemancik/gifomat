@@ -3,7 +3,7 @@ package wtf.matsem.gifomat.ui.main
 import wtf.matsem.gifomat.data.model.ImageFrame
 import wtf.matsem.gifomat.mvp.BaseView
 
-interface MainView: BaseView {
+interface MainView : BaseView {
 
 	fun initCamera()
 
@@ -17,15 +17,11 @@ interface MainView: BaseView {
 
 	fun hidePlayer()
 
-	fun showCountdown()
-
-	fun setCountdownText(text: String)
-
-	fun hideCountdown()
-
 	fun setStatusIdle()
 
 	fun setStatusRecording()
 
 	fun setStatusPlayback()
+
+	fun setStatusCountdown(howMuch: Int)
 }
