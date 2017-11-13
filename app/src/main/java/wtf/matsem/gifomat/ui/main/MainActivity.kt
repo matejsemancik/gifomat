@@ -26,6 +26,8 @@ class MainActivity : Activity(), MainView {
 
 	@BindView(R.id.preview_surface) lateinit var previewSurface: SurfaceView
 	@BindView(R.id.playback_surface) lateinit var playbackSurface: SurfaceView
+
+	@BindView(R.id.status_wrapper) lateinit var statusWrapper: LinearLayout
 	@BindView(R.id.status_text) lateinit var statusText: TextView
 
 	@BindView(R.id.playback_info_layout) lateinit var playbackInfoLayout: LinearLayout
@@ -72,19 +74,10 @@ class MainActivity : Activity(), MainView {
 	}
 
 	override fun setStatusCountdown(howMuch: Int) {
-		statusText.scaleX = 1.5f
-		statusText.scaleY = 1.5f
-
-		val animator = ValueAnimator.ofFloat(1.5f, 1.0f).setDuration(300)
-		animator.interpolator = DecelerateInterpolator()
-		animator.addUpdateListener({ animation ->
-			statusText.scaleX = animation.animatedValue as Float
-			statusText.scaleY = animation.animatedValue as Float
-		})
+		animateBump(statusText, 1.5f)
 
 		statusText.text = resources.getString(R.string.status_countdown, howMuch)
 		statusText.setBackgroundColor(resources.getColor(R.color.bluegreen, theme))
-		animator.start()
 	}
 
 	override fun showPlaybackInfo() {
@@ -160,6 +153,25 @@ class MainActivity : Activity(), MainView {
 	@OnClick(R.id.status_wrapper)
 	fun onStatusClick() {
 		presenter.onStatusClick()
+		animateBump(statusWrapper, 1.5f)
+	}
+
+	// endregion
+
+	// region Anim tools
+
+	private fun animateBump(view: View, fromScale: Float) {
+		view.scaleX = fromScale
+		view.scaleY = fromScale
+
+		val animator = ValueAnimator.ofFloat(fromScale, 1.0f).setDuration(300)
+		animator.interpolator = DecelerateInterpolator()
+		animator.addUpdateListener({ animation ->
+			view.scaleX = animation.animatedValue as Float
+			view.scaleY = animation.animatedValue as Float
+		})
+
+		animator.start()
 	}
 
 	// endregion

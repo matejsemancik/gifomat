@@ -26,7 +26,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	enum class State {
-		IDLE, RECORDING, PLAYBACK
+		IDLE, COUNTDOWN, RECORDING, PLAYBACK
 	}
 
 	var state = State.IDLE
@@ -83,7 +83,10 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.take(seconds.toLong() + 1)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.doOnNext({ time -> getView()?.setStatusCountdown((seconds - time).toInt()) })
+				.doOnNext({ time ->
+					getView()?.setStatusCountdown((seconds - time).toInt())
+					state = State.COUNTDOWN
+				})
 				.doOnComplete({
 					startCapture()
 				})
@@ -153,7 +156,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	// region UI events
 
 	fun onStatusClick() {
-		if (state == State.RECORDING) {
+		if (state == State.RECORDING || state == State.COUNTDOWN) {
 			return
 		}
 
