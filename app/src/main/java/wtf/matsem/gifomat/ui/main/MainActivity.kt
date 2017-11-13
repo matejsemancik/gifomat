@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.OnClick
 import org.koin.android.ext.android.inject
 import wtf.matsem.gifomat.*
 import wtf.matsem.gifomat.data.model.ImageFrame
@@ -155,6 +156,11 @@ class MainActivity : Activity(), MainView {
 	// endregion
 
 	// region UI events
+
+	@OnClick(R.id.status_wrapper)
+	fun onStatusClick() {
+		presenter.onStatusClick()
+	}
 
 	// endregion
 }

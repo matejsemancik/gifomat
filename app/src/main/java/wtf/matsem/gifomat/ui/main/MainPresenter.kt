@@ -25,6 +25,12 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		const val BUTTON_PIN = "GPIO_37"
 	}
 
+	enum class State {
+		IDLE, RECORDING, PLAYBACK
+	}
+
+	var state = State.IDLE
+
 	val disposables = CompositeDisposable()
 	var imgSequenceDisposable: Disposable? = null
 	var imageLooper: Disposable? = null
@@ -34,6 +40,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	override fun attachView(view: MainView) {
 		super.attachView(view)
 
+		state = State.IDLE
 		getView()?.setStatusIdle()
 		getView()?.initCamera()
 		getView()?.startCamPreview()
@@ -69,6 +76,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		stopPlayback()
 		countdownTimer?.dispose()
 		getView()?.setStatusIdle()
+		state = State.IDLE
 
 		val seconds = 3
 		countdownTimer = Observable.interval(0, 1000L, TimeUnit.MILLISECONDS)
@@ -85,6 +93,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	private fun startCapture() {
 		stopPlayback()
 		getView()?.setStatusRecording()
+		state = State.RECORDING
 
 		imgSequenceDisposable?.dispose()
 		imgSequenceDisposable = imageProcessor.getImageSequenceObservable().subscribe(
@@ -106,6 +115,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		getView()?.showPlayer()
 		getView()?.setStatusPlayback()
 		getView()?.showPlaybackInfo()
+		state = State.PLAYBACK
 
 		val sequences = gifomatStore.getSequences()
 		imageLooper = Observable.fromIterable(sequences)
@@ -118,11 +128,13 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.repeat()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe({ frame ->
-					getView()?.playImageFrame(frame)
-				}, { throwable ->
-					Timber.tag(TAG).e(throwable)
-				}
+				.subscribe(
+						{ frame ->
+							getView()?.playImageFrame(frame)
+						},
+						{ throwable ->
+							Timber.tag(TAG).e(throwable)
+						}
 				)
 	}
 
@@ -131,4 +143,26 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		getView()?.hidePlayer()
 		getView()?.hidePlaybackInfo()
 	}
+
+	private fun setIdle() {
+		stopPlayback()
+		getView()?.setStatusIdle()
+		state = State.IDLE
+	}
+
+	// region UI events
+
+	fun onStatusClick() {
+		if (state == State.RECORDING) {
+			return
+		}
+
+		if (state == State.IDLE && gifomatStore.getSequences().isNotEmpty()) {
+			startPlayback()
+		} else {
+			setIdle()
+		}
+	}
+
+	// endregion
 }
