@@ -17,8 +17,8 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		const val TAG = "GifomatCamera"
 		const val IMAGE_WIDTH = 640
 		const val IMAGE_HEIGHT = 480
-		private const val MAX_IMGREADER_IMAGES = 1
-		const val NUMBER_IMAGES = 15;
+		private const val MAX_IMGREADER_IMAGES = 2
+		const val NUMBER_IMAGES = 20
 	}
 
 	private val imageReader = ImageReader.newInstance(IMAGE_WIDTH, IMAGE_HEIGHT, ImageFormat.JPEG, MAX_IMGREADER_IMAGES)
@@ -112,7 +112,12 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 	// region Burst capture
 
 	fun captureBurst() {
-		previewSession?.let {
+		if (previewSession == null) {
+			e(TAG) { "Preview session not running" }
+			return
+		}
+
+		previewSession.let {
 			val requestBuilder = cameraDevice?.createCaptureRequest(CameraDevice.TEMPLATE_VIDEO_SNAPSHOT)
 
 			requestBuilder?.let {
@@ -125,8 +130,6 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 				previewSession?.captureBurst(requests, object : CameraCaptureSession.CaptureCallback() { /* Meh */ }, bgHandler)
 			}
 		}
-
-		e(TAG) { "Preview session not running" }
 	}
 
 	// endregion

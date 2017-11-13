@@ -10,14 +10,13 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import org.koin.android.ext.android.inject
-import wtf.matsem.gifomat.R
-import wtf.matsem.gifomat.d
+import wtf.matsem.gifomat.*
 import wtf.matsem.gifomat.data.model.ImageFrame
-import wtf.matsem.gifomat.e
 import wtf.matsem.gifomat.tool.callback.SimpleSurfaceHolderCallback
 import wtf.matsem.gifomat.tool.camera.GifomatCamera
 import wtf.matsem.gifomat.tool.camera.ImageProcessor
@@ -27,6 +26,10 @@ class MainActivity : Activity(), MainView {
 	@BindView(R.id.preview_surface) lateinit var previewSurface: SurfaceView
 	@BindView(R.id.playback_surface) lateinit var playbackSurface: SurfaceView
 	@BindView(R.id.status_text) lateinit var statusText: TextView
+
+	@BindView(R.id.playback_info_layout) lateinit var playbackInfoLayout: LinearLayout
+	@BindView(R.id.playback_sequence_info) lateinit var playbackSequenceInfo: TextView
+	@BindView(R.id.playback_frame_info) lateinit var playbackFrameInfo: TextView
 
 	private val presenter by inject<MainPresenter>()
 	private val camera2 by inject<GifomatCamera>()
@@ -81,6 +84,24 @@ class MainActivity : Activity(), MainView {
 		statusText.text = resources.getString(R.string.status_countdown, howMuch)
 		statusText.setBackgroundColor(resources.getColor(R.color.bluegreen, theme))
 		animator.start()
+	}
+
+	override fun showPlaybackInfo() {
+		playbackInfoLayout.setVisible()
+		playbackSequenceInfo.text = ""
+		playbackFrameInfo.text = ""
+	}
+
+	override fun hidePlaybackInfo() {
+		playbackInfoLayout.setGone()
+	}
+
+	override fun setPlaybackSeqInfo(text: String) {
+		playbackSequenceInfo.text = text
+	}
+
+	override fun setPlaybackFrameInfo(text: String) {
+		playbackFrameInfo.text = text
 	}
 
 	override fun initCamera() {

@@ -61,14 +61,16 @@
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:layout_margin="16dp"
 			android:alpha="0.7"
+			android:clipChildren="false"
 			android:orientation="vertical">
 
 			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:clipChildren="false"
 				android:orientation="horizontal">
 
 				<TextView
@@ -89,7 +91,58 @@
 					android:textAllCaps="true"
 					android:textSize="18sp"
 					android:textStyle="bold"
-					tools:text="Idle" />
+					tools:background="@color/yellow_crayola"
+					tools:text="@string/status_playback" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:visibility="gone"
+				tools:visibility="visible"
+				android:id="@+id/playback_info_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:orientation="horizontal">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@color/blue_dark"
+					android:padding="8dp"
+					android:text="@string/playback_seq"
+					android:textAllCaps="true"
+					android:textColor="@color/white_powder"
+					android:textSize="16sp" />
+
+				<TextView
+					android:id="@+id/playback_sequence_info"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@color/yellow_crayola"
+					android:padding="8dp"
+					android:textAllCaps="true"
+					android:textSize="16sp"
+					tools:text="1/34 - 22 Dec 2017" />
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@color/blue_dark"
+					android:padding="8dp"
+					android:text="@string/playback_frame"
+					android:textAllCaps="true"
+					android:textColor="@color/white_powder"
+					android:textSize="16sp" />
+
+				<TextView
+					android:id="@+id/playback_frame_info"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@color/yellow_crayola"
+					android:padding="8dp"
+					android:textAllCaps="true"
+					android:textSize="16sp"
+					tools:text="3/15" />
 			</LinearLayout>
 		</LinearLayout>
 	</FrameLayout>

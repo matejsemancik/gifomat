@@ -6,4 +6,9 @@
 	<string name="status_playback">Playback</string>
 	<string name="status_recording">Recording</string>
 	<string name="status_countdown">Prepare: %d</string>
+
+	<string name="playback_seq">seq</string>
+	<string name="playback_seq_info">%1$d/%2$d - %3$s</string>
+	<string name="playback_frame">frame</string>
+	<string name="playback_frame_number">%1$d/%2$d</string>
 </resources>

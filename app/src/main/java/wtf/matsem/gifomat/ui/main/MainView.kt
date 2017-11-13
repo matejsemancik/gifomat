@@ -24,4 +24,12 @@ interface MainView : BaseView {
 	fun setStatusPlayback()
 
 	fun setStatusCountdown(howMuch: Int)
+
+	fun showPlaybackInfo()
+
+	fun hidePlaybackInfo()
+
+	fun setPlaybackSeqInfo(text: String)
+
+	fun setPlaybackFrameInfo(text: String)
 }

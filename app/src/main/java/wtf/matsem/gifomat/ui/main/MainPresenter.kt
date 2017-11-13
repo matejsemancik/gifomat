@@ -29,7 +29,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	var imgSequenceDisposable: Disposable? = null
 	var imageLooper: Disposable? = null
 	var countdownTimer: Disposable? = null
-	var playbackDelay = 90L
+	var playbackDelay = 110L
 
 	override fun attachView(view: MainView) {
 		super.attachView(view)
@@ -66,11 +66,9 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	private fun startCountdown() {
-		imageLooper?.dispose()
+		stopPlayback()
 		countdownTimer?.dispose()
-
 		getView()?.setStatusIdle()
-		getView()?.hidePlayer()
 
 		val seconds = 3
 		countdownTimer = Observable.interval(0, 1000L, TimeUnit.MILLISECONDS)
@@ -85,8 +83,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	private fun startCapture() {
-		imageLooper?.dispose()
-		getView()?.hidePlayer()
+		stopPlayback()
 		getView()?.setStatusRecording()
 
 		imgSequenceDisposable?.dispose()
@@ -108,16 +105,30 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 
 		getView()?.showPlayer()
 		getView()?.setStatusPlayback()
+		getView()?.showPlaybackInfo()
 
-		imageLooper = Observable.fromIterable(gifomatStore.getSequences())
-				.concatMap { imageSequence -> Observable.fromIterable(imageSequence.images) }
-				.concatMap { frame: ImageFrame -> Observable.just(frame).delay(playbackDelay, TimeUnit.MILLISECONDS) }
+		val sequences = gifomatStore.getSequences()
+		imageLooper = Observable.fromIterable(sequences)
+				.concatMap { imageSequence ->
+					Observable.fromIterable(imageSequence.images)
+				}
+				.concatMap { frame: ImageFrame ->
+					Observable.just(frame).delay(playbackDelay, TimeUnit.MILLISECONDS)
+				}
 				.repeat()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						{ frame -> getView()?.playImageFrame(frame) },
-						{ throwable -> Timber.tag(TAG).e(throwable) }
+				.subscribe({ frame ->
+					getView()?.playImageFrame(frame)
+				}, { throwable ->
+					Timber.tag(TAG).e(throwable)
+				}
 				)
+	}
+
+	private fun stopPlayback() {
+		imageLooper?.dispose()
+		getView()?.hidePlayer()
+		getView()?.hidePlaybackInfo()
 	}
 }
