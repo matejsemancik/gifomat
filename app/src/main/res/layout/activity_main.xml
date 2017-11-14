@@ -68,13 +68,13 @@
 			android:orientation="vertical">
 
 			<LinearLayout
-				android:transformPivotX="0dp"
-				android:transformPivotY="0dp"
 				android:id="@+id/status_wrapper"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:clipChildren="false"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:transformPivotX="0dp"
+				android:transformPivotY="0dp">
 
 				<TextView
 					android:layout_width="wrap_content"
