@@ -113,6 +113,10 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	private fun startPlayback() {
+		if (gifomatStore.getSequences().isEmpty()) {
+			setIdle()
+		}
+
 		imageLooper?.dispose()
 
 		getView()?.showPlayer()
@@ -134,6 +138,8 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 				.subscribe(
 						{ frame ->
 							getView()?.playImageFrame(frame)
+//							getView()?.setPlaybackFrameInfo("${frame.timestamp}")
+//							getView()?.setPlaybackSeqInfo("meh")
 						},
 						{ throwable ->
 							Timber.tag(TAG).e(throwable)
