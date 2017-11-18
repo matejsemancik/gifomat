@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
@@ -23,6 +24,7 @@ android {
 ext.butterknife_version = '8.8.1'
 ext.rxjava_version = '2.1.6'
 ext.rxandroid_version = '2.0.1'
+ext.firebase_version = '11.6.0'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -34,7 +36,7 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     compileOnly 'com.google.android.things:androidthings:+'
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     // Logging
     implementation 'com.jakewharton.timber:timber:4.6.0'
@@ -47,4 +49,13 @@ dependencies {
     // Rx
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+
+    // Firebase
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
+    }
 }
+
+apply plugin: 'com.google.gms.google-services'
