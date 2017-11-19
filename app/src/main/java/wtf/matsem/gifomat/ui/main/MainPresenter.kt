@@ -23,6 +23,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	companion object {
 		const val TAG = "MainPresenter"
 		const val BUTTON_PIN = "GPIO_37"
+		const val PLAYBACK_DELAY = 110L
 	}
 
 	enum class State {
@@ -35,7 +36,6 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	var imgSequenceDisposable: Disposable? = null
 	var imageLooper: Disposable? = null
 	var countdownTimer: Disposable? = null
-	var playbackDelay = 110L
 
 	override fun attachView(view: MainView) {
 		super.attachView(view)
@@ -108,6 +108,15 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 	}
 
 	private fun onSequenceCaptured(sequence: ImageSequence) {
+		imageProcessor.createGif(sequence).subscribe(
+				{ file ->
+					Timber.tag(TAG).d("Created new GIF file ${file.path}")
+				},
+				{ error ->
+					Timber.tag(TAG).e(error)
+				}
+		)
+
 		gifomatStore.addSequence(sequence)
 		startPlayback()
 	}
@@ -130,7 +139,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 					Observable.fromIterable(imageSequence.images)
 				}
 				.concatMap { frame: ImageFrame ->
-					Observable.just(frame).delay(playbackDelay, TimeUnit.MILLISECONDS)
+					Observable.just(frame).delay(PLAYBACK_DELAY, TimeUnit.MILLISECONDS)
 				}
 				.repeat()
 				.subscribeOn(Schedulers.io())

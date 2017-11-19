@@ -8,6 +8,7 @@ import wtf.matsem.gifomat.hardware.PeripheralManager
 import wtf.matsem.gifomat.tool.camera.GifomatCamera
 import wtf.matsem.gifomat.tool.camera.ImageProcessor
 import wtf.matsem.gifomat.ui.main.MainPresenter
+import java.io.File
 
 fun getAppModules() = listOf(MainModule(), AppModule())
 
@@ -16,7 +17,8 @@ class MainModule : AndroidModule() {
 		context(name = "MainActivity") {
 			provide { MainPresenter(get(), get(), get()) }
 			provide { GifomatCamera(get()) }
-			provide { ImageProcessor() }
+			provide { ImageProcessor(get()) }
+			provide { context.externalCacheDir } bind File::class
 		}
 	}
 }
