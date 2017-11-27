@@ -6,10 +6,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import timber.log.Timber
 import wtf.matsem.gifomat.data.model.ImageFrame
 import wtf.matsem.gifomat.data.model.ImageSequence
 import wtf.matsem.gifomat.data.store.GifomatStore
+import wtf.matsem.gifomat.domain.api.GifomatService
 import wtf.matsem.gifomat.hardware.PeripheralManager
 import wtf.matsem.gifomat.mvp.BasePresenter
 import wtf.matsem.gifomat.t
@@ -18,6 +22,7 @@ import java.util.concurrent.TimeUnit
 
 class MainPresenter(private val peripheralManager: PeripheralManager,
 					private val imageProcessor: ImageProcessor,
+					private val gifomatService: GifomatService,
 					private val gifomatStore: GifomatStore) : BasePresenter<MainView>() {
 
 	companion object {
@@ -111,6 +116,15 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		imageProcessor.createGif(sequence).subscribe(
 				{ file ->
 					Timber.tag(TAG).d("Created new GIF file ${file.path}")
+
+					val requestFile = RequestBody.create(MediaType.parse("image/gif"), file)
+					gifomatService
+							.uploadSlackFile(
+									MultipartBody.Part.createFormData("file", file.name, requestFile),
+									RequestBody.create(okhttp3.MultipartBody.FORM, "gifomat"))
+							.subscribeOn(Schedulers.io())
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe({ Timber.tag(TAG).d("GIF uploaded") }, { error -> Timber.tag(TAG).e(error) })
 				},
 				{ error ->
 					Timber.tag(TAG).e(error)

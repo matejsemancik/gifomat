@@ -25,6 +25,8 @@ ext.butterknife_version = '8.8.1'
 ext.rxjava_version = '2.1.6'
 ext.rxandroid_version = '2.0.1'
 ext.firebase_version = '11.6.0'
+ext.retrofit_version = '2.3.0'
+ext.okhttp3_version = '3.9.1'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -55,6 +57,12 @@ dependencies {
 
     // GIF
     implementation 'com.waynejo:androidndkgif:0.3.3'
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
