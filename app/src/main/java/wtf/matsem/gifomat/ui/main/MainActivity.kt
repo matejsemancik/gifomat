@@ -32,7 +32,6 @@ class MainActivity : Activity(), MainView {
 
 	@BindView(R.id.playback_info_layout) lateinit var playbackInfoLayout: LinearLayout
 	@BindView(R.id.playback_sequence_info) lateinit var playbackSequenceInfo: TextView
-	@BindView(R.id.playback_frame_info) lateinit var playbackFrameInfo: TextView
 
 	private val presenter by inject<MainPresenter>()
 	private val camera2 by inject<GifomatCamera>()
@@ -82,8 +81,7 @@ class MainActivity : Activity(), MainView {
 
 	override fun showPlaybackInfo() {
 		playbackInfoLayout.setVisible()
-		playbackSequenceInfo.text = ""
-		playbackFrameInfo.text = ""
+		playbackSequenceInfo.text = "1/X"
 	}
 
 	override fun hidePlaybackInfo() {
@@ -92,10 +90,6 @@ class MainActivity : Activity(), MainView {
 
 	override fun setPlaybackSeqInfo(text: String) {
 		playbackSequenceInfo.text = text
-	}
-
-	override fun setPlaybackFrameInfo(text: String) {
-		playbackFrameInfo.text = text
 	}
 
 	override fun initCamera() {

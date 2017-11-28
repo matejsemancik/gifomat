@@ -10,7 +10,6 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import timber.log.Timber
-import wtf.matsem.gifomat.data.model.ImageFrame
 import wtf.matsem.gifomat.data.model.ImageSequence
 import wtf.matsem.gifomat.data.store.GifomatStore
 import wtf.matsem.gifomat.domain.api.GifomatService
@@ -150,19 +149,19 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		val sequences = gifomatStore.getSequences()
 		imageLooper = Observable.fromIterable(sequences)
 				.concatMap { imageSequence ->
-					Observable.fromIterable(imageSequence.images)
+
+					Observable.fromIterable(imageSequence.images).map { frame -> Pair(sequences.indexOf(imageSequence), frame) }
 				}
-				.concatMap { frame: ImageFrame ->
-					Observable.just(frame).delay(PLAYBACK_DELAY, TimeUnit.MILLISECONDS)
+				.concatMap { sequenceFramePair ->
+					Observable.just(sequenceFramePair).delay(PLAYBACK_DELAY, TimeUnit.MILLISECONDS)
 				}
 				.repeat()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						{ frame ->
-							getView()?.playImageFrame(frame)
-//							getView()?.setPlaybackFrameInfo("${frame.timestamp}")
-//							getView()?.setPlaybackSeqInfo("meh")
+						{ pair ->
+							getView()?.setPlaybackSeqInfo("${pair.first + 1}/${sequences.size}")
+							getView()?.playImageFrame(pair.second)
 						},
 						{ throwable ->
 							Timber.tag(TAG).e(throwable)

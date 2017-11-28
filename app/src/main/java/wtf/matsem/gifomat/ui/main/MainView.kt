@@ -30,6 +30,4 @@ interface MainView : BaseView {
 	fun hidePlaybackInfo()
 
 	fun setPlaybackSeqInfo(text: String)
-
-	fun setPlaybackFrameInfo(text: String)
 }
