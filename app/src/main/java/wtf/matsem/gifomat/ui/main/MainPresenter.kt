@@ -26,7 +26,7 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 
 	companion object {
 		const val TAG = "MainPresenter"
-		const val BUTTON_PIN = "GPIO_37"
+		const val BUTTON_PIN = "GPIO2_IO05"
 		const val PLAYBACK_DELAY = 110L
 	}
 
@@ -103,10 +103,12 @@ class MainPresenter(private val peripheralManager: PeripheralManager,
 		state = State.RECORDING
 
 		imgSequenceDisposable?.dispose()
-		imgSequenceDisposable = imageProcessor.getImageSequenceObservable().subscribe(
-				{ sequence: ImageSequence? -> sequence?.let { onSequenceCaptured(it) } },
-				{ throwable: Throwable? -> t(TAG) { throwable } }
-		)
+		imgSequenceDisposable = imageProcessor
+				.getImageSequenceObservable()
+				.subscribe(
+						{ sequence: ImageSequence? -> sequence?.let { onSequenceCaptured(it) } },
+						{ throwable: Throwable? -> t(TAG) { throwable } }
+				)
 
 		getView()?.triggerBurstCapture()
 	}

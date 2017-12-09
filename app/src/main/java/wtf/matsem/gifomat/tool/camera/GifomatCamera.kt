@@ -17,7 +17,7 @@ class GifomatCamera(private val cameraManager: CameraManager) {
 		const val TAG = "GifomatCamera"
 		const val IMAGE_WIDTH = 640
 		const val IMAGE_HEIGHT = 480
-		private const val MAX_IMGREADER_IMAGES = 2
+		private const val MAX_IMGREADER_IMAGES = 20
 		const val NUMBER_IMAGES = 20
 	}
 

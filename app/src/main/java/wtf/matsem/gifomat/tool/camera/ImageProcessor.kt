@@ -38,8 +38,8 @@ class ImageProcessor(private val cacheDir: File) {
 				}
 				.buffer(GifomatCamera.NUMBER_IMAGES)
 				.map { imageFrames: MutableList<ImageFrame> -> ImageSequence(imageFrames) }
-				.takeUntil(Observable.just(true).delay(5, TimeUnit.SECONDS))
-				.subscribeOn(Schedulers.io())
+				.takeUntil(Observable.just(true).delay(20, TimeUnit.SECONDS))
+				.subscribeOn(Schedulers.computation())
 				.observeOn(AndroidSchedulers.mainThread())
 	}
 
